@@ -27,6 +27,9 @@ export default function App() {
     setVpnKey(key)
   }
 
+  console.log("Telegram:", window.Telegram)
+  console.log("Telegram.WebApp:", window.Telegram?.WebApp)
+
   useEffect(() => {
     if (window.Telegram?.WebApp) {
       window.Telegram.WebApp.ready()
