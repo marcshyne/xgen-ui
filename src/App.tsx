@@ -23,14 +23,17 @@ export default function App() {
       alert("Telegram WebApp не инициализирован")
     }
 
-    // мок-ключ для локального теста
     const key = `vpn-${country.slice(0, 2).toLowerCase()}-${protocol.toLowerCase()}-1A2B3C4D`
     setVpnKey(key)
   }
 
   useEffect(() => {
-    window.Telegram?.WebApp?.ready()
-    window.Telegram?.WebApp?.expand()
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.ready()
+      window.Telegram.WebApp.expand()
+    } else {
+      console.log("Telegram WebApp не найден")
+    }
   }, [])
 
   return (
