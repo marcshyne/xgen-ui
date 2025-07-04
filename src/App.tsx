@@ -1,43 +1,37 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 
-const countries = ["🇺🇸 США", "🇩🇪 Германия", "🇫🇷 Франция", "🇳🇱 Нидерланды"]
-const protocols = ["WireGuard", "OpenVPN", "Shadowsocks"]
+const countries = ["🇺🇸 США", "🇩🇪 Германия", "🇫🇷 Франция", "🇳🇱 Нидерланды"];
+const protocols = ["WireGuard", "OpenVPN", "Shadowsocks"];
 
 export default function App() {
-  const [country, setCountry] = useState("")
-  const [protocol, setProtocol] = useState("")
-  const [vpnKey, setVpnKey] = useState("")
+  const [country, setCountry] = useState("");
+  const [protocol, setProtocol] = useState("");
 
-  const isReady = country && protocol
+  const isReady = country && protocol;
 
-  const generateKey = () => {
+  const sendDataToBot = () => {
     const data = {
+      action: "get_vpn_key",
       country,
       protocol,
-      action: "get_vpn_key",
-    }
+    };
 
     if (window.Telegram?.WebApp?.sendData) {
-      window.Telegram.WebApp.sendData(JSON.stringify(data))
+      window.Telegram.WebApp.sendData(JSON.stringify(data));
     } else {
-      alert("Telegram WebApp не инициализирован")
+      alert("❌ Telegram WebApp не инициализирован");
     }
-
-    const key = `vpn-${country.slice(0, 2).toLowerCase()}-${protocol.toLowerCase()}-1A2B3C4D`
-    setVpnKey(key)
-  }
-
-  console.log("Telegram:", window.Telegram)
-  console.log("Telegram.WebApp:", window.Telegram?.WebApp)
+  };
 
   useEffect(() => {
     if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.ready()
-      window.Telegram.WebApp.expand()
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
+      console.log("✅ Telegram WebApp готов");
     } else {
-      console.log("Telegram WebApp не найден")
+      console.log("❌ Telegram WebApp не найден");
     }
-  }, [])
+  }, []);
 
   return (
     <div className="min-h-screen bg-neutral-900 text-white px-4 py-6 text-sm">
@@ -83,37 +77,11 @@ export default function App() {
 
       <button
         disabled={!isReady}
-        onClick={generateKey}
+        onClick={sendDataToBot}
         className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 rounded-md text-white font-semibold disabled:opacity-30"
       >
         🚀 Получить ключ
       </button>
-
-      {vpnKey && (
-        <div className="mt-6 bg-neutral-800 rounded-md p-4 text-center">
-          <div className="mb-3 break-all font-mono text-green-400 text-xs">{vpnKey}</div>
-          <div className="flex justify-center gap-3 text-sm">
-            <button
-              onClick={() => navigator.clipboard.writeText(vpnKey)}
-              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md"
-            >
-              📋 Скопировать
-            </button>
-            <button
-              onClick={() => alert("Инструкция пока в разработке")}
-              className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md"
-            >
-              📘 Инструкция
-            </button>
-            <button
-              onClick={() => alert("Скоро будет!")}
-              className="bg-teal-700 hover:bg-teal-600 px-4 py-2 rounded-md"
-            >
-              ⚙️ Установить
-            </button>
-          </div>
-        </div>
-      )}
     </div>
-  )
+  );
 }
